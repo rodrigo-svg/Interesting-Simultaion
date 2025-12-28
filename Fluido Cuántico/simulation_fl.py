@@ -1,105 +1,136 @@
 import pygame
 import numpy as np
-import imageio
 import sys
+import imageio  
 
-# --- CONFIGURACIÓN EQUILIBRADA (VELOZ PERO ESTABLE) ---
-WIDTH, HEIGHT = 200, 200  
-SCALING = 4               
+# --- CONFIGURACIÓN DE LA SIMULACIÓN ---
+WIDTH, HEIGHT = 800, 800
+GRID_SIZE = 256  
+DT = 0.1         
+ALPHA = 10.0 + 0.5j  
+BETA = 2.1          
+GAMMA = 0.1          
+
+# --- CONFIGURACIÓN DEL GIF ---
 SAVE_GIF = True
-MAX_FRAMES = 180*4          
+MAX_FRAMES = 300  
+frames_list = []
 
-CONFIG = {
-    "difusion_u": 0.16,      
-    "difusion_v": 0.08,      
-    "feed_rate": 0.055,      
-    "kill_rate": 0.062,      
-    "dt": 1.15               # Bajamos el dt para que no "explote" la química
+REGIMES = {
+    pygame.K_1: (0.5, 1.5, 0.0),   
+    pygame.K_2: (0.1, 0.5, 0.05),  
+    pygame.K_3: (1.2, -0.2, 0.4),  
 }
 
-COLOR_DEEP = np.array([20, 0, 50])      
-COLOR_GLOW = np.array([100, 255, 255])  
-COLOR_HEART = np.array([255, 150, 0])   
+class QuantumFluid:
+    def __init__(self, size):
+        self.size = size
+        self.psi = (np.random.random((size, size)) - 0.5 + 
+                    (np.random.random((size, size)) - 0.5) * 1j) * 0.1
+        
+        kx = np.fft.fftfreq(size) * 2 * np.pi
+        ky = np.fft.fftfreq(size) * 2 * np.pi
+        KX, KY = np.meshgrid(kx, ky)
+        self.K2 = KX**2 + KY**2
+        
+        self.alpha = ALPHA
+        self.beta = BETA
+        self.gamma = GAMMA
 
-def laplacian(Z):
-    return (
-        np.roll(Z, 1, axis=0) + np.roll(Z, -1, axis=0) +
-        np.roll(Z, 1, axis=1) + np.roll(Z, -1, axis=1) -
-        4 * Z
-    )
+    def update(self):
+        psi_hat = np.fft.fft2(self.psi)
+        kernel = np.exp(-self.alpha * self.K2 * DT)
+        psi_hat *= kernel
+        self.psi = np.fft.ifft2(psi_hat)
 
-def main():
-    global SAVE_GIF 
+        mag2 = np.abs(self.psi)**2
+        reaction = (self.psi - (1 + 1j * self.beta) * mag2 * self.psi + 
+                    self.gamma * np.conj(self.psi))
+        self.psi += reaction * DT
+
+    def interact(self, pos, radius=5):
+        x, y = int(pos[1] * self.size / WIDTH), int(pos[0] * self.size / HEIGHT)
+        Y, X = np.ogrid[:self.size, :self.size]
+        dist = np.sqrt((X - x)**2 + (Y - y)**2)
+        mask = np.exp(-dist**2 / (radius**2))
+        self.psi += mask * (np.exp(1j * np.random.uniform(0, 2*np.pi)))
+
+    def get_render_data(self):
+        hue = (np.angle(self.psi) + np.pi) / (2 * np.pi)
+        val = np.clip(np.abs(self.psi), 0, 1)
+        
+        h = hue * 6.0
+        i = h.astype(int) % 6
+        f = h - i
+        p = val * (1 - 0.8)
+        q = val * (1 - 0.8 * f)
+        t = val * (1 - 0.8 * (1 - f))
+        
+        rgb = np.zeros((self.size, self.size, 3), dtype=np.uint8)
+        m0, m1, m2, m3, m4, m5 = i==0, i==1, i==2, i==3, i==4, i==5
+        
+        rgb[m0] = np.stack([val[m0], t[m0], p[m0]], axis=-1) * 255
+        rgb[m1] = np.stack([q[m1], val[m1], p[m1]], axis=-1) * 255
+        rgb[m2] = np.stack([p[m2], val[m2], t[m2]], axis=-1) * 255
+        rgb[m3] = np.stack([p[m3], q[m3], val[m3]], axis=-1) * 255
+        rgb[m4] = np.stack([t[m4], p[m4], val[m4]], axis=-1) * 255
+        rgb[m5] = np.stack([val[m5], p[m5], q[m5]], axis=-1) * 255
+        
+        return rgb
+
+# --- INICIALIZACIÓN PYGAME ---
+pygame.init()
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Simulador CGL - Grabando GIF...")
+clock = pygame.time.Clock()
+
+fluid = QuantumFluid(GRID_SIZE)
+
+# Loop Principal
+running = True
+frame_count = 0
+
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key in REGIMES:
+                ai, b, g = REGIMES[event.key]
+                fluid.alpha = 1.0 + ai * 1j
+                fluid.beta = b
+                fluid.gamma = g
+
+    if pygame.mouse.get_pressed()[0]:
+        fluid.interact(pygame.mouse.get_pos())
+
+    fluid.update()
+
+    rgb_data = fluid.get_render_data()
+    surf = pygame.surfarray.make_surface(rgb_data)
+    upscaled_surf = pygame.transform.smoothscale(surf, (WIDTH, HEIGHT))
     
-    pygame.init()
-    screen = pygame.display.set_mode((WIDTH * SCALING, HEIGHT * SCALING))
-    pygame.display.set_caption("Fractal Estable - Reacción Difusión")
-    clock = pygame.time.Clock()
+    screen.blit(upscaled_surf, (0, 0))
+    pygame.display.flip()
 
-    U = np.ones((WIDTH, HEIGHT))
-    V = np.zeros((WIDTH, HEIGHT))
+    # --- LÓGICA DE CAPTURA ---
+    if SAVE_GIF and frame_count < MAX_FRAMES:
+        # Capturamos la pantalla actual
+        # Hacemos un subsampling [::2, ::2] para que el AMD A10 no sufra al procesar
+        img = pygame.surfarray.array3d(screen)
+        img = np.transpose(img, (1, 0, 2))[::2, ::2] 
+        frames_list.append(img)
+        frame_count += 1
+        if frame_count % 30 == 0:
+            print(f"Capturado {frame_count}/{MAX_FRAMES} frames...")
 
-    # Semilla original
-    seed_size = 3
-    for _ in range(5): 
-        sx, sy = np.random.randint(WIDTH//4, WIDTH - WIDTH//4), np.random.randint(HEIGHT//4, HEIGHT - HEIGHT//4)
-        U[sx-seed_size:sx+seed_size, sy-seed_size:sy+seed_size] = 0.5
-        V[sx-seed_size:sx+seed_size, sy-seed_size:sy+seed_size] = 0.25
+    clock.tick(60)
 
-    frames_list = []
-    running = True
-    f_count = 0
+# --- GUARDADO AL FINALIZAR ---
+if SAVE_GIF and len(frames_list) > 0:
+    print("Exportando GIF... esto puede tomar un minuto en tu AMD A10.")
+    imageio.mimsave('fluido_cuantico.gif', frames_list, fps=30, loop=0)
+    print("¡Hecho! Archivo 'fluido_cuantico.gif' creado con éxito.")
 
-    print("Corriendo en modo rápido estable... Grabando GIF.")
-
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-
-        # --- FÍSICA OPTIMIZADA ---
-        # 8 pasos es el límite seguro para que no desaparezcan
-        for _ in range(8): 
-            lu = laplacian(U)
-            lv = laplacian(V)
-            uv2 = U * V**2
-            U += (CONFIG["difusion_u"] * lu - uv2 + CONFIG["feed_rate"] * (1 - U)) * CONFIG["dt"]
-            V += (CONFIG["difusion_v"] * lv + uv2 - (CONFIG["feed_rate"] + CONFIG["kill_rate"]) * V) * CONFIG["dt"]
-            # El clip es vital para que no se rompa la simulación
-            np.clip(U, 0, 1, out=U)
-            np.clip(V, 0, 1, out=V)
-
-        # --- VISUALIZACIÓN ---
-        v_flat = V.reshape((WIDTH, HEIGHT, 1))
-        render_data = (1 - v_flat) * COLOR_DEEP + v_flat * COLOR_GLOW * 1.5
-        render_data += (v_flat ** 2.5) * COLOR_HEART 
-
-        # Corregimos el swapaxes para que Pygame lo lea bien
-        surface = pygame.surfarray.make_surface(render_data.clip(0, 255).astype(np.uint8).swapaxes(0, 1))
-        scaled_surface = pygame.transform.smoothscale(surface, (WIDTH * SCALING, HEIGHT * SCALING))
-        
-        screen.blit(scaled_surface, (0, 0))
-        pygame.display.flip()
-
-        if SAVE_GIF and f_count < MAX_FRAMES:
-            img = pygame.surfarray.array3d(screen)
-            frames_list.append(np.transpose(img, (1, 0, 2))[::2, ::2])
-            f_count += 1
-            if f_count % 30 == 0:
-                print(f"Progreso grabación: {f_count}/{MAX_FRAMES}")
-        
-        if f_count == MAX_FRAMES and SAVE_GIF:
-            print("Captura finalizada. Cierra la ventana.")
-            SAVE_GIF = False 
-
-        clock.tick(60)
-
-    if len(frames_list) > 0:
-        print("Guardando 'crecimiento_estable.gif'...")
-        imageio.mimsave('crecimiento_estable.gif', frames_list, fps=30, loop=0)
-        print("¡Listo!")
-
-    pygame.quit()
-
-if __name__ == "__main__":
-    main()
+pygame.quit()
+sys.exit()
