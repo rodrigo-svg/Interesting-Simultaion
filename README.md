@@ -11,7 +11,7 @@ Aqui se presentarán simulaciones de los campos de la física, la biologia y las
 
 
 ## 1. Fluido Cuántico (Ecuación Ginzburg-Landau)
-[Ver Simulación Visual](./Fluido%20Cuántico/fluido_cuantico.gif)
+[Ver Simulación](./Fluido%20Cuántico/fluido_cuantico.gif)
 
 **Descripción:**
 Simulación de la ecuación compleja de Ginzburg-Landau (CGL), que modela la transición al caos y la formación de defectos topológicos (vórtices) en fluidos cuánticos y sistemas no lineales.
