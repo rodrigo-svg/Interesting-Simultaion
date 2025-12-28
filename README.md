@@ -6,7 +6,7 @@ Aqui se presentarán simulaciones de los campos de la física, la biologia y las
 ## Previas
 | Simulación | Enlace Visual |
 | :--- | :--- |
-| **Fluido Cuántico** | [Ver Simulación Visual](./Fluido%20Cuántico/fluido_cuantico.gif) |
+| **Fluido Cuántico** | [Simulación](./Fluido%20Cuántico/fluido_cuantico.gif) |
 | **Crecimiento Fractal** |  [Visualizar GIF](./crecimiento_fractal.gif) |
 
 
@@ -27,7 +27,7 @@ Simulación de la ecuación compleja de Ginzburg-Landau (CGL), que modela la tra
 ---
 
 ## 2. Crecimiento Fractal (Modelo Gray-Scott)
-[Ver Simulación](./crecimiento_fractal.gif)
+[Simulación](./crecimiento_fractal.gif)
 
 **Descripción:**
 Simulación de sistemas de Reacción-Difusión basada en el modelo de Gray-Scott. Representa la interacción química entre dos sustancias que genera patrones fractales y estructuras ramificadas similares a procesos biológicos.
