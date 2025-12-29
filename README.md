@@ -26,7 +26,7 @@ Simulación de la ecuación compleja de Ginzburg-Landau (CGL), que modela la tra
 
 ---
 
-## 2. Crecimiento Fractal (Modelo Gray-Scott)
+## 2. Patrones de Turing (Modelo Gray-Scott)
 [Simulación](./crecimiento_fractal.gif)
 
 **Descripción:**
