@@ -407,7 +407,7 @@ function drawAChart(){
   const st=amax-amin>12?2:1; for (let a=amin; a<=amax; a+=st){ ctx.beginPath(); ctx.moveTo(l,Y(a)); ctx.lineTo(w-rr,Y(a)); ctx.stroke(); ctx.fillText(a.toFixed(0),14,Y(a)+4); }
   ctx.strokeStyle='#8a857b'; ctx.beginPath(); ctx.moveTo(l,Y(0)); ctx.lineTo(w-rr,Y(0)); ctx.stroke();
   for (let s=0; s<=Tm; s+=0.2) ctx.fillText(s.toFixed(1), X(s)-8, h-b+16);
-  ctx.fillText('m/s²', 6, t+4); ctx.fillText('t (s)', w-rr-34, h-4);
+  ctx.fillText('m/s²', l+6, t+10); ctx.fillText('t (s)', X(Tm)-34, h-4);
   RUNS.forEach(r=>{ ctx.strokeStyle=r.cfg.color; ctx.lineWidth=2.2; ctx.beginPath(); let started=false;
     for (let i=0;i<r.t.length;i+=4){ if(!isFinite(r.t[i])||!isFinite(r.av[i])) break; const px=X(r.t[i]), py=Y(r.av[i]); started?ctx.lineTo(px,py):ctx.moveTo(px,py); started=true; } ctx.stroke();
     const sa=stateAt({t:r.t,x:r.x,y:r.y,v:r.av},tSim); if (isFinite(sa.v)){ ctx.fillStyle=r.cfg.color; ctx.beginPath(); ctx.arc(X(Math.min(tSim,r.T)),Y(sa.v),4,0,7); ctx.fill(); } });
