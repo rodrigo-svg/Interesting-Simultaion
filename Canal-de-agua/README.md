@@ -12,7 +12,7 @@ Simulación de agua real (con viscosidad y roce) bajando por un canal desde un p
    - **Corte de frente:** qué fracción de un arco de cicloide forma el fondo. Con el arco completo (1,00) el fondo es hondo y empalma vertical con las paredes; con fracciones menores es más plano. Siempre es una cicloide verdadera; lo que cambia es el radio del círculo que la genera.
    - **Vista desde arriba:** desde qué punto del arco, t₀, parte el angostamiento. Con t₀ = 0° la pared arranca perpendicular al flujo; con valores mayores arranca más suave.
 
-   Dos gráficos muestran cómo cambia el tiempo de llegada al mover cada parámetro y marcan el mejor valor.
+   Dos gráficos muestran cómo cambia el tiempo de llegada al mover cada parámetro y marcan el mejor valor. La página parte en la mejor configuración encontrada, y el botón **Volver a la mejor configuración** regresa a ella en cualquier momento.
 4. En la vista 3D: arrastra para girar, usa la rueda o el gesto de pinza para acercar y haz doble clic para volver a la vista inicial.
 
 No requiere instalación ni conexión a internet: three.js va integrado en el archivo.
@@ -43,7 +43,7 @@ $$Q = V\,A,\qquad R = \frac{A}{P},\qquad V\frac{dV}{ds} = g\sin\theta - \frac{f\
 
 | Canal | Tiempo P→Q (con ondas cruzadas) | Velocidad en Q |
 | :--- | ---: | ---: |
-| 4. Cicloide + fondo cicloidal | **0,899 s** | 3,23 m/s |
+| 4. Cicloide + fondo cicloidal (arco 1,0 · t₀ = 20°) | **0,893 s** | 3,23 m/s |
 | 3. Cicloide | 0,944 s | 3,01 m/s |
 | 2. Línea recta | 0,991 s | 2,74 m/s |
 | 1. Paralelas | 1,078 s | 2,03 m/s |
@@ -51,7 +51,7 @@ $$Q = V\,A,\qquad R = \frac{A}{P},\qquad V\frac{dV}{ds} = g\sin\theta - \frac{f\
 
 - Angostar el canal junta el agua en una capa más gruesa, que roza menos en proporción. Por eso gana el canal que se angosta antes.
 - Un fondo en U ayuda todavía más, porque la misma agua moja menos superficie. Con paredes paralelas y fondo cicloidal se obtienen 0,927 s, mejor que el canal 3: la forma del corte pesa más que cuánto se angosta el canal.
-- En el caso 4, lo mejor es el arco completo en el corte, y en la vista desde arriba un inicio cercano a t₀ ≈ 20°–30°: el tiempo baja a **0,893 s**, porque así se evita el choque brusco en la entrada. El cambio entre 15° y 20° es abrupto porque ahí el resalto pasa de desprendido a adherido en la estimación de ondas cruzadas; el valor exacto del óptimo es menos confiable que su tendencia.
+- **Mejor configuración del caso 4 (punto de control):** se probaron 170 combinaciones, con la fracción del arco de 0,1 a 1,0 cada 0,1 y t₀ de 0° a 160° cada 10°. La más rápida es el **arco completo (1,0) con t₀ = 20°: 0,893 s**, velocidad máxima de 3,36 m/s. Arrancar el angostamiento un poco después de 0° evita el choque brusco en la entrada. El salto entre 10° y 20° se debe a que ahí el resalto pasa de desprendido a adherido en la estimación de ondas cruzadas, así que el ángulo exacto es menos confiable que la tendencia.
 
 ## Validación
 

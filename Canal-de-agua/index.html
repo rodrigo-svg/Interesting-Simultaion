@@ -80,15 +80,15 @@
   </div>
 
   <div class="card">
-    <h2>Caso 4 · Cicloide + fondo cicloidal: parámetros de las cicloides</h2>
+    <div class="row3d"><h2 style="margin:0">Caso 4 · Cicloide + fondo cicloidal: parámetros de las cicloides</h2><button id="best4" title="Arco completo y angostamiento desde t₀ = 20°: la más rápida de 170 configuraciones probadas">Volver a la mejor configuración</button></div>
     <div class="c4">
       <div>
-        <div class="ctrl"><label>Corte de frente: fracción del arco usada <span class="v" id="alv"></span></label><input type="range" id="al" min="0.15" max="1" step="0.01" value="1"></div>
+        <div class="ctrl"><label>Corte de frente: fracción del arco usada <span class="v" id="alv"></span></label><input type="range" id="al" min="0.1" max="1" step="0.01" value="1"></div>
         <div class="cap" id="alinfo"></div>
         <canvas id="prevSec" class="prev"></canvas>
       </div>
       <div>
-        <div class="ctrl"><label>Vista desde arriba: inicio del arco t₀ <span class="v" id="t0v"></span></label><input type="range" id="t0" min="0" max="160" step="1" value="0"></div>
+        <div class="ctrl"><label>Vista desde arriba: inicio del arco t₀ <span class="v" id="t0v"></span></label><input type="range" id="t0" min="0" max="160" step="1" value="20"></div>
         <div class="cap" id="t0info"></div>
         <canvas id="prevPlan" class="prev"></canvas>
       </div>
@@ -297,7 +297,7 @@ const CFG = [ {id:'par',  k:'par', section:'rect', name:'Paralelas',    color:'#
 
 /* ===================== STATE ===================== */
 const $ = id => document.getElementById(id);
-let RUNS = null, tSim = 0, playing = true, last = null, VMAX = 3; const P4 = {al:Math.PI, t0:0}; let SW=null, swTimer=null;
+let RUNS = null, tSim = 0, playing = true, last = null, VMAX = 3; const P4 = {al:Math.PI, t0:20}; let SW=null, swTimer=null;
 const SPEED_STOPS = [[0,'#2c3e91'],[0.3,'#2f7fd1'],[0.55,'#33b0a6'],[0.78,'#f2c14e'],[1,'#e8603c']];
 function hex2rgb(h){ return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)]; }
 function speedRGB(v){ const u=Math.max(0,Math.min(1,v/VMAX)); for (let k=1;k<SPEED_STOPS.length;k++){ const [a,ca]=SPEED_STOPS[k-1],[b,cb]=SPEED_STOPS[k];
@@ -469,6 +469,8 @@ function frame(ts){
 let tmr=null; ['Q','B0','B1','al','t0'].forEach(id=>$(id).addEventListener('input', ()=>{ clearTimeout(tmr); tmr=setTimeout(compute,120); }));
 $('play').onclick=()=>{ playing=!playing; $('play').textContent=playing?'Pausa':'Reproducir'; };
 $('reset').onclick=()=>{ tSim=0; };
+// punto de control: mejor configuración del barrido (arco 0,1–1,0 cada 0,1 × t₀ 0°–160° cada 10°)
+$('best4').onclick=()=>{ $('al').value=1; $('t0').value=20; compute(); };
 buildLanes(); compute(); requestAnimationFrame(frame);
 </script>
 
