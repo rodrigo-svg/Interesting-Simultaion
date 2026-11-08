@@ -80,7 +80,7 @@
   </div>
 
   <div class="card">
-    <div class="row3d"><h2 style="margin:0">Caso 4 · Cicloide + fondo cicloidal: parámetros de las cicloides</h2><button id="best4" title="Arco completo y angostamiento desde t₀ = 20°: la más rápida de 170 configuraciones probadas">Volver a la mejor configuración</button></div>
+    <div class="row3d"><h2 style="margin:0">Caso 4 · Cicloide + fondo cicloidal: parámetros de las cicloides</h2><button id="best4" title="Arco completo y angostamiento desde t₀ = 23,4°: óptimo afinado (0,89282 s)">Volver a la mejor configuración</button></div>
     <div class="c4">
       <div>
         <div class="ctrl"><label>Corte de frente: fracción del arco usada <span class="v" id="alv"></span></label><input type="range" id="al" min="0.1" max="1" step="0.01" value="1"></div>
@@ -88,7 +88,7 @@
         <canvas id="prevSec" class="prev"></canvas>
       </div>
       <div>
-        <div class="ctrl"><label>Vista desde arriba: inicio del arco t₀ <span class="v" id="t0v"></span></label><input type="range" id="t0" min="0" max="160" step="1" value="20"></div>
+        <div class="ctrl"><label>Vista desde arriba: inicio del arco t₀ <span class="v" id="t0v"></span></label><input type="range" id="t0" min="0" max="160" step="0.1" value="23.4"></div>
         <div class="cap" id="t0info"></div>
         <canvas id="prevPlan" class="prev"></canvas>
       </div>
@@ -154,7 +154,7 @@ const CFG = [ {id:'par',  k:'par', section:'rect', name:'Paralelas',    color:'#
 
 /* ===================== STATE ===================== */
 const $ = id => document.getElementById(id);
-let RUNS = null, tSim = 0, playing = true, last = null, VMAX = 3; const P4 = {al:Math.PI, t0:20}; let SW=null, swTimer=null;
+let RUNS = null, tSim = 0, playing = true, last = null, VMAX = 3; const P4 = {al:Math.PI, t0:23.4}; let SW=null, swTimer=null;
 const SPEED_STOPS = [[0,'#2c3e91'],[0.3,'#2f7fd1'],[0.55,'#33b0a6'],[0.78,'#f2c14e'],[1,'#e8603c']];
 function hex2rgb(h){ return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)]; }
 function speedRGB(v){ const u=Math.max(0,Math.min(1,v/VMAX)); for (let k=1;k<SPEED_STOPS.length;k++){ const [a,ca]=SPEED_STOPS[k-1],[b,cb]=SPEED_STOPS[k];
@@ -166,7 +166,7 @@ function compute(){
   if (b1>b0){ b1=b0; $('B1').value=(b0*100).toFixed(1); }
   $('Qv').textContent=(Q*1000).toFixed(1)+' L/s'; $('B0v').textContent=(b0*100).toFixed(0)+' cm'; $('B1v').textContent=(b1*100).toFixed(1)+' cm';
   const AL=+$('al').value*Math.PI, T0=+$('t0').value; P4.al=AL; P4.t0=T0;
-  $('alv').textContent=(+$('al').value).toFixed(2)+' del arco'; $('t0v').textContent=T0.toFixed(0)+'°';
+  $('alv').textContent=(+$('al').value).toFixed(2)+' del arco'; $('t0v').textContent=T0.toFixed(1)+'°';
   RUNS = CFG.map(c => { const is4=c.id==='cyc2', o={Q, nu:NU, eps:EPS, walls:true, section:c.section, alpha: is4?AL:Math.PI};
     const bf=wallWidth(c.k,b0,b1,L, is4?T0:0), r=runChannel(BASE,bf,o,H), sh=shockEstimate(r,bf,L), rs=runChannelWithShock(BASE,bf,o,H,sh);
     return Object.assign(r, {cfg:c, bf, Tsh:rs.T, b0, b1}); });
@@ -327,7 +327,7 @@ let tmr=null; ['Q','B0','B1','al','t0'].forEach(id=>$(id).addEventListener('inpu
 $('play').onclick=()=>{ playing=!playing; $('play').textContent=playing?'Pausa':'Reproducir'; };
 $('reset').onclick=()=>{ tSim=0; };
 // punto de control: mejor configuración del barrido (arco 0,1–1,0 cada 0,1 × t₀ 0°–160° cada 10°)
-$('best4').onclick=()=>{ $('al').value=1; $('t0').value=20; compute(); };
+$('best4').onclick=()=>{ $('al').value=1; $('t0').value=23.4; compute(); };
 buildLanes(); compute(); requestAnimationFrame(frame);
 </script>
 
