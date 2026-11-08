@@ -39,6 +39,7 @@
   .lane canvas.sec{height:74px;margin-top:4px}
   .lane .cap{font-size:11px;color:var(--muted);font-family:"IBM Plex Mono",monospace}
   #vchart{display:block;width:100%;height:220px}
+  #achart{display:block;width:100%;height:220px}
   .legend{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-family:"IBM Plex Mono",monospace;margin:8px 0 2px}
   .legend .bar{height:10px;width:220px;border-radius:3px}
   table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
@@ -102,6 +103,8 @@
     <div class="lanes" id="lanes"></div>
     <div class="legend"><span>velocidad:</span><span id="lmin">0</span><span class="bar" id="lbar"></span><span id="lmax"></span></div>
     <canvas id="vchart"></canvas>
+    <div class="cap" style="margin-top:10px">aceleración = derivada de la velocidad en el tiempo, dv/dt</div>
+    <canvas id="achart"></canvas>
     <table><thead><tr><th>Paredes</th><th>Tiempo P→Q</th><th>Con ondas cruzadas</th><th>v en Q</th><th>v máx.</th><th>Profundidad en Q</th></tr></thead><tbody id="tbody"></tbody></table>
   </div>
 
@@ -180,7 +183,7 @@ function compute(){
 /* ===================== LANES (2D) ===================== */
 function setupCanvas(cv){ const r=window.devicePixelRatio||1, w=cv.clientWidth, h=cv.clientHeight; cv.width=Math.round(w*r); cv.height=Math.round(h*r);
   const ctx=cv.getContext('2d'); ctx.setTransform(r,0,0,r,0,0); return {ctx,w,h}; }
-let LANES=[], VC=null;
+let LANES=[], VC=null, AC=null;
 function buildLanes(){
   const box=$('lanes'); box.innerHTML='';
   LANES = CFG.map((c,k) => { const d=document.createElement('div'); d.className='lane';
@@ -189,7 +192,7 @@ function buildLanes(){
     box.appendChild(d); return { side:d.querySelector('canvas.side'), plan:d.querySelector('canvas.plan'), sec:d.querySelector('canvas.sec'), k }; });
   resize2D();
 }
-function resize2D(){ LANES.forEach(l=>{ l.S=setupCanvas(l.side); l.P=setupCanvas(l.plan); l.C=setupCanvas(l.sec); }); VC=setupCanvas($('vchart')); }
+function resize2D(){ LANES.forEach(l=>{ l.S=setupCanvas(l.side); l.P=setupCanvas(l.plan); l.C=setupCanvas(l.sec); }); VC=setupCanvas($('vchart')); AC=setupCanvas($('achart')); }
 window.addEventListener('resize', ()=>{ resize2D(); if (RUNS){ drawCase4Previews(); redrawSweeps(); } });
 
 function drawLane(l){
@@ -243,6 +246,25 @@ function drawVChart(){
     const st=stateAt(r,tSim); ctx.fillStyle=r.cfg.color; ctx.beginPath(); ctx.arc(X(Math.min(tSim,r.T)),Y(st.v),4,0,7); ctx.fill();
   });
   if (w>=600){ ctx.font='500 11.5px "IBM Plex Mono", monospace'; const labs=RUNS.map(r=>({r, y:Y(r.vQ)+4})).sort((p,q)=>p.y-q.y);
+    for (let i=1;i<labs.length;i++) if (labs[i].y-labs[i-1].y<14) labs[i].y=labs[i-1].y+14;
+    labs.forEach(o=>{ ctx.fillStyle=o.r.cfg.color; ctx.fillText(o.r.cfg.name, X(o.r.T)+8, o.y); }); }
+  if (tSim<Tm){ ctx.strokeStyle='rgba(29,35,41,.3)'; ctx.beginPath(); ctx.moveTo(X(tSim),t); ctx.lineTo(X(tSim),h-b); ctx.stroke(); }
+}
+function drawAChart(){
+  const {ctx,w,h}=AC; ctx.clearRect(0,0,w,h);
+  const Tm=Math.max(...RUNS.map(r=>isFinite(r.T)?r.T:1))*1.02, l=44, rr=(w>=600?190:10), t=10, b=28;
+  let amin=0, amax=0; RUNS.forEach(r=>{ for (let i=0;i<r.av.length;i+=4){ const a=r.av[i]; if (isFinite(a)){ if(a<amin) amin=a; if(a>amax) amax=a; } } });
+  amax=Math.ceil(amax+0.5); amin=Math.floor(amin-0.5);
+  const X=x=>l+(w-l-rr)*x/Tm, Y=a=>h-b-(h-t-b)*(a-amin)/(amax-amin);
+  ctx.strokeStyle='#e2ded5'; ctx.fillStyle='#66707a'; ctx.font='11px "IBM Plex Mono", monospace'; ctx.lineWidth=1;
+  const st=amax-amin>12?2:1; for (let a=amin; a<=amax; a+=st){ ctx.beginPath(); ctx.moveTo(l,Y(a)); ctx.lineTo(w-rr,Y(a)); ctx.stroke(); ctx.fillText(a.toFixed(0),14,Y(a)+4); }
+  ctx.strokeStyle='#8a857b'; ctx.beginPath(); ctx.moveTo(l,Y(0)); ctx.lineTo(w-rr,Y(0)); ctx.stroke();
+  for (let s=0; s<=Tm; s+=0.2) ctx.fillText(s.toFixed(1), X(s)-8, h-b+16);
+  ctx.fillText('m/s²', 6, t+4); ctx.fillText('t (s)', w-rr-34, h-4);
+  RUNS.forEach(r=>{ ctx.strokeStyle=r.cfg.color; ctx.lineWidth=2.2; ctx.beginPath(); let started=false;
+    for (let i=0;i<r.t.length;i+=4){ if(!isFinite(r.t[i])||!isFinite(r.av[i])) break; const px=X(r.t[i]), py=Y(r.av[i]); started?ctx.lineTo(px,py):ctx.moveTo(px,py); started=true; } ctx.stroke();
+    const sa=stateAt({t:r.t,x:r.x,y:r.y,v:r.av},tSim); if (isFinite(sa.v)){ ctx.fillStyle=r.cfg.color; ctx.beginPath(); ctx.arc(X(Math.min(tSim,r.T)),Y(sa.v),4,0,7); ctx.fill(); } });
+  if (w>=600){ ctx.font='500 11.5px "IBM Plex Mono", monospace'; const labs=RUNS.map(r=>({r, y:Y(r.av[r.av.length-1])+4})).sort((p,q)=>p.y-q.y);
     for (let i=1;i<labs.length;i++) if (labs[i].y-labs[i-1].y<14) labs[i].y=labs[i-1].y+14;
     labs.forEach(o=>{ ctx.fillStyle=o.r.cfg.color; ctx.fillText(o.r.cfg.name, X(o.r.T)+8, o.y); }); }
   if (tSim<Tm){ ctx.strokeStyle='rgba(29,35,41,.3)'; ctx.beginPath(); ctx.moveTo(X(tSim),t); ctx.lineTo(X(tSim),h-b); ctx.stroke(); }
@@ -319,7 +341,7 @@ function frame(ts){
   if (last===null) last=ts; const dt=Math.min((ts-last)/1000,0.05); last=ts;
   if (playing && RUNS){ tSim += dt*(+$('ts').value); const Tm=Math.max(...RUNS.map(r=>isFinite(r.T)?r.T:0)); if (tSim > Tm+1.2) tSim = 0; }
   $('clock').textContent='t = '+tSim.toFixed(3)+' s'; $('tsv').textContent=(+$('ts').value).toFixed(2)+'×';
-  try { if (RUNS){ LANES.forEach(drawLane); drawVChart(); } } catch(e){ console.error(e); }
+  try { if (RUNS){ LANES.forEach(drawLane); drawVChart(); drawAChart(); } } catch(e){ console.error(e); }
   if (window.update3D) { try { window.update3D(); } catch(e){ console.error(e); } }
   requestAnimationFrame(frame);
 }

@@ -85,9 +85,13 @@ function runChannel(base, bfun, o, H){
     if (Fr[i]>2 && wallAng>maxWallAngFr2) maxWallAngFr2=wallAng;
   }
   if (stopAt>=0) for (let i=stopAt+1;i<=n;i++){ v[i]=0; t[i]=Infinity; }
+  // acceleration dv/dt = g·sinθ − f V²/(8R), evaluated exactly from the equation of motion (no numerical differentiation)
+  const av=new Float64Array(n+1);
+  for (let i=0;i<=n;i++){ if (!(v[i]>0)) { av[i]=NaN; continue; } const j=Math.min(i,n-1), dx=x[j+1]-x[j], dy=y[j+1]-y[j], sn=-dy/Math.hypot(dx,dy);
+    const sc=sec(v[i],x[i]), f=frictionChannel(v[i], sc.R, o.nu, o.eps); av[i]=g*sn - f*v[i]*v[i]/(8*sc.R); }
   const E0 = g*H + v[0]*v[0]/2;
   let vmax=0, ymin=Infinity; for (let i=0;i<=n;i++){ if (v[i]>vmax) vmax=v[i]; if (y[i]<ymin) ymin=y[i]; }
-  return { x, y, s, t, v, h: hh, b: bb, T_top: TT, D: DD, Fr, T: stopAt>=0?Infinity:t[n], vQ: stopAt>=0?0:v[n], hQ: hh[n], bQ: bb[n], FrQ: Fr[n],
+  return { x, y, s, t, v, av, h: hh, b: bb, T_top: TT, D: DD, Fr, T: stopAt>=0?Infinity:t[n], vQ: stopAt>=0?0:v[n], hQ: hh[n], bQ: bb[n], FrQ: Fr[n],
     stopAt, reach: stopAt>=0 ? s[stopAt]/s[n] : 1, vmax, ymin, len: s[n], V0: v[0], h0: hh[0], kind, alpha: o.alpha,
     lossPct: 100*(Ewall+Ebed)/E0, wallPct: 100*Ewall/E0, bedPct: 100*Ebed/E0, maxWallAngFr2 };
 }
