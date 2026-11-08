@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Explora cómo una relación lineal entre los extremos de un segmento genera una familia de hipérbolas. Parámetros editables y zoom independiente.">
+<title>Recta e hipérbola · Geometría analítica</title>
+<style>
+:root{color-scheme:light dark;--bg:#f7f8fa;--surface:#fff;--ink:#202c36;--muted:#52616e;--border:#d9e0e5;--grid:#e9edf0;--blue:#1763a5;--orange:#b5531c;--error:#a72d2d;--focus:#1763a5}
+@media(prefers-color-scheme:dark){:root{--bg:#141b22;--surface:#1b242d;--ink:#e4eaf0;--muted:#adbac5;--border:#43505c;--grid:#303c47;--blue:#79b9f1;--orange:#f5b07f;--error:#ffacab;--focus:#91caff}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:1240px;margin:auto;padding:36px 28px 24px}header{max-width:820px;margin-bottom:24px}.eyebrow{font-size:13px;color:var(--muted);letter-spacing:.06em}h1{font-size:clamp(25px,4vw,36px);font-weight:600;line-height:1.2;margin:9px 0 12px}h2{font-size:19px;margin:0;font-weight:600}p{margin:8px 0;color:var(--muted)}a{color:var(--blue)}
+.parameters{display:flex;flex-wrap:wrap;gap:16px;align-items:end;padding:18px 0;border-block:1px solid var(--border);margin-bottom:24px}.parameters label{display:grid;gap:5px;font-size:14px}input[type=number]{width:125px;font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:9px}button{font:inherit;font-size:14px;color:var(--ink);background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:9px 12px;cursor:pointer}button:hover{border-color:var(--blue)}:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.panels{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px}.panel{min-width:0}.panel-heading{display:flex;gap:12px;align-items:baseline;justify-content:space-between}.kind{font-size:12px;color:var(--muted)}.equation{min-height:50px;font-size:18px;margin:10px 0;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.fraction{display:inline-flex;vertical-align:middle;flex-direction:column;text-align:center;line-height:1.25}.fraction>span:first-child{border-bottom:1px solid currentColor;padding:0 7px 3px}.fraction>span:last-child{padding-top:3px}
+.plot{position:relative;width:100%;background:var(--surface);border-radius:6px}.plot svg{display:block;touch-action:none;user-select:none;width:100%}.plot text{fill:var(--ink);font:12px system-ui,sans-serif}.plot .axis-title{font-size:13px}.plot .grid{stroke:var(--grid);stroke-width:1}.plot .frame{fill:none;stroke:var(--border)}.plot .line{fill:none;stroke-width:2.5}.plot .reference{stroke:var(--muted);stroke-width:1;stroke-dasharray:5 5}.plot .value-label{font-size:12px}
+.plot-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:9px 0}.plot-tools button{padding:6px 10px}.hint{font-size:12px;color:var(--muted)}.slider{margin-top:18px}.slider-label{display:flex;justify-content:space-between;gap:12px;font-size:14px}input[type=range]{display:block;width:100%;margin:15px 0;accent-color:var(--blue)}output,.values{font-variant-numeric:tabular-nums}.values{font-size:14px;color:var(--muted);min-height:44px}.domain{font-size:14px;color:var(--muted);margin-top:18px;min-height:44px}.message{color:var(--error);min-height:24px;font-size:14px;margin-top:10px}.tooltip{position:absolute;pointer-events:none;background:var(--ink);color:var(--surface);padding:8px 10px;border-radius:5px;font-size:13px;z-index:2;white-space:nowrap}.notes{border-top:1px solid var(--border);margin-top:28px;padding-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:28px;font-size:14px}.notes strong{color:var(--ink);font-weight:600}footer{font-size:12px;color:var(--muted);margin-top:24px}noscript{display:block;padding:16px}
+@media(max-width:750px){main{padding:24px 16px}.panels,.notes{grid-template-columns:1fr}.panel+.panel{margin-top:14px}.parameters{gap:12px}input[type=number]{width:100px}.kind{max-width:120px;text-align:right}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<main>
+<header><div class="eyebrow">GEOMETRÍA ANALÍTICA</div><h1>Una recta, una familia de hipérbolas</h1><p>La recta determina los extremos del segmento. Su longitud determina la hipérbola. Mueve Q para explorar la relación.</p></header>
+<form class="parameters" id="parameters">
+ <label for="slope">Pendiente m<input id="slope" type="number" step="any" min="-100" max="100" value="0.25" required></label>
+ <label for="intercept">Término b<input id="intercept" type="number" step="any" min="-1000" max="1000" value="0" required></label>
+ <label for="qmax">Q máximo<input id="qmax" type="number" step="any" min="0.000001" max="1000" value="4" required></label>
+ <button type="button" id="base">Restaurar caso base</button>
+</form>
+<div class="panels">
+ <section class="panel" aria-labelledby="linear-heading">
+  <div class="panel-heading"><h2 id="linear-heading">Recta L</h2><span class="kind" id="linear-kind">Relación lineal</span></div>
+  <div class="equation" id="line-equation">P = 0,25 Q</div>
+  <div class="plot" id="linear-plot"></div>
+  <div class="plot-tools" data-controls="linear"><button type="button" data-action="in" aria-label="Acercar recta">+</button><button type="button" data-action="out" aria-label="Alejar recta">−</button><button type="button" data-action="reset">Restablecer vista</button><span class="hint">Rueda: zoom · arrastrar: desplazar</span></div>
+  <div class="slider"><label for="q" class="slider-label"><span>Q · posición del extremo derecho</span><output id="q-value" for="q">4</output></label><input id="q" type="range" min="0" max="4" step="0.00000001" value="4"><div class="values" id="values" aria-live="polite"></div></div>
+ </section>
+ <section class="panel" aria-labelledby="hyperbola-heading">
+  <div class="panel-heading"><h2 id="hyperbola-heading">Hipérbola H<sub>Q</sub></h2><span class="kind">Relación hiperbólica</span></div>
+  <div class="equation">r(x) = <span class="fraction"><span>x</span><span id="denominator">3 − x</span></span></div>
+  <div class="plot" id="hyperbola-plot"></div>
+  <div class="plot-tools" data-controls="hyperbola"><button type="button" data-action="in" aria-label="Acercar hipérbola">+</button><button type="button" data-action="out" aria-label="Alejar hipérbola">−</button><button type="button" data-action="reset">Restablecer vista</button><span class="hint">Zoom y desplazamiento independientes</span></div>
+  <div class="domain" id="domain"></div><div class="message" id="message" role="status"></div>
+ </section>
+</div>
+<div class="notes">
+ <p><strong>Izquierda.</strong> P y Q son coordenadas de dos extremos en una misma recta numérica. Cada punto del gráfico es (Q, P), con P = mQ + b. La longitud del segmento es ℓ = Q − P, cuando P &lt; Q.</p>
+ <p><strong>Derecha.</strong> R recorre el interior del segmento: x = PR y RQ = ℓ − x. Por eso r(x) = PR/RQ = x/(ℓ − x), con 0 &lt; x &lt; ℓ. La pendiente m de L y la razón r son cantidades diferentes.</p>
+</div>
+<footer>Escalas lineales. Caso base: m = 0,25; b = 0; Q = 4; P = 1; ℓ = 3. Funciona sin conexión ni dependencias externas.</footer>
+<noscript>Activa JavaScript para utilizar el deslizador y los gráficos.</noscript>
+</main>
+<script>
+'use strict';
+(() => {
+const $=id=>document.getElementById(id), NS='http://www.w3.org/2000/svg';
+const state={m:.25,b:0,qmax:4,q:4};
+const number=n=>Math.abs(n)>0&&(Math.abs(n)<1e-5||Math.abs(n)>=1e7)?n.toExponential(3):new Intl.NumberFormat('es-CL',{maximumFractionDigits:8}).format(Object.is(n,-0)?0:n);
+function model(s){const p=s.m*s.q+s.b;return {p,length:s.q-p};}
+function ratio(x,length){return length>0&&x>=0&&x<length?x/(length-x):NaN;}
+function element(name,attrs={},text){const e=document.createElementNS(NS,name);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,v);if(text!==undefined)e.textContent=text;return e;}
+function ticks(min,max,count){const raw=(max-min)/count,power=10**Math.floor(Math.log10(raw));const unit=raw/power;const step=(unit<=1?1:unit<=2?2:unit<=5?5:10)*power;const out=[];if(!Number.isFinite(step)||step<=0)return out;for(let n=Math.ceil(min/step),i=0;n*step<=max+step*1e-8&&i<40;n++,i++)out.push(n*step);return out;}
+class Plot{
+ constructor(id,kind){this.host=$(id);this.kind=kind;this.view=null;this.pointers=new Map();this.host.innerHTML='';this.svg=element('svg',{role:'img','aria-label':kind==='linear'?'Relación lineal entre Q y P':'Razón hiperbólica PR/RQ en función de x'});this.host.append(this.svg);this.tip=document.createElement('div');this.tip.className='tooltip';this.tip.hidden=true;this.host.append(this.tip);this.bind();new ResizeObserver(()=>this.draw()).observe(this.host);}
+ reset(){this.view=null;this.tip.hidden=true;this.draw();}
+ defaults(){if(this.kind==='linear'){const vals=[0,state.b,state.m*state.qmax+state.b];const low=Math.min(...vals),high=Math.max(...vals);const spread=Math.max(high-low,.1);return {xmin:-.05*state.qmax,xmax:1.08*state.qmax,ymin:low-.08*spread,ymax:high+.16*spread};}const lengths=[-state.b,(1-state.m)*state.qmax-state.b];const max=Math.max(...lengths,1e-6);return {xmin:-.03*max,xmax:1.08*max,ymin:-.3,ymax:9.9};}
+ geometry(){this.w=Math.max(280,this.host.clientWidth);this.h=340;this.box={l:70,r:this.w-18,t:26,b:this.h-48};if(!this.view)this.view=this.defaults();this.svg.setAttribute('viewBox',`0 0 ${this.w} ${this.h}`);this.svg.setAttribute('height',this.h);}
+ sx(x){const v=this.view,b=this.box;return b.l+(x-v.xmin)/(v.xmax-v.xmin)*(b.r-b.l);}
+ sy(y){const v=this.view,b=this.box;return b.b-(y-v.ymin)/(v.ymax-v.ymin)*(b.b-b.t);}
+ ix(px){const v=this.view,b=this.box;return v.xmin+(px-b.l)/(b.r-b.l)*(v.xmax-v.xmin);}
+ iy(py){const v=this.view,b=this.box;return v.ymax-(py-b.t)/(b.b-b.t)*(v.ymax-v.ymin);}
+ coordinates(e){const r=this.svg.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top];}
+ inside(x,y){const b=this.box;return x>=b.l&&x<=b.r&&y>=b.t&&y<=b.b;}
+ zoom(factor,px,py){const b=this.box,v=this.view;if(px===undefined){px=(b.l+b.r)/2;py=(b.t+b.b)/2;}const x=this.ix(px),y=this.iy(py);const newx=(v.xmax-v.xmin)/factor,newy=(v.ymax-v.ymin)/factor;if(newx<1e-12||newx>1e12||newy<1e-12||newy>1e12)return;this.view={xmin:x+(v.xmin-x)/factor,xmax:x+(v.xmax-x)/factor,ymin:y+(v.ymin-y)/factor,ymax:y+(v.ymax-y)/factor};this.tip.hidden=true;this.draw();}
+ pan(dx,dy){const b=this.box,v=this.view;const x=dx/(b.r-b.l)*(v.xmax-v.xmin),y=dy/(b.b-b.t)*(v.ymax-v.ymin);v.xmin-=x;v.xmax-=x;v.ymin+=y;v.ymax+=y;this.draw();}
+ bind(){
+  this.svg.addEventListener('wheel',e=>{const [x,y]=this.coordinates(e);if(!this.inside(x,y))return;e.preventDefault();this.zoom(Math.exp(-Math.max(-100,Math.min(100,e.deltaY))*.006),x,y);},{passive:false});
+  this.svg.addEventListener('pointerdown',e=>{const p=this.coordinates(e);if(!this.inside(...p))return;this.svg.setPointerCapture(e.pointerId);this.pointers.set(e.pointerId,p);this.tip.hidden=true;});
+  this.svg.addEventListener('pointermove',e=>{const point=this.coordinates(e);if(!this.pointers.has(e.pointerId)){this.inspect(...point);return;}const previous=this.pointers.get(e.pointerId);const old=[...this.pointers.values()];this.pointers.set(e.pointerId,point);const next=[...this.pointers.values()];if(next.length===1){this.pan(point[0]-previous[0],point[1]-previous[1]);}else if(next.length===2){const distance=a=>Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]);const before=distance(old),after=distance(next);if(before>5&&after>5)this.zoom(after/before,(next[0][0]+next[1][0])/2,(next[0][1]+next[1][1])/2);}});
+  for(const type of ['pointerup','pointercancel'])this.svg.addEventListener(type,e=>{this.pointers.delete(e.pointerId);if(type==='pointerup')this.inspect(...this.coordinates(e));});
+  this.svg.addEventListener('pointerleave',()=>{if(!this.pointers.size)this.tip.hidden=true;});
+ }
+ inspect(px,py){const x=this.ix(px),{length}=model(state);const valid=this.kind==='linear'?x>=0&&x<=state.qmax:length>0&&x>=0&&x<length;if(!this.inside(px,py)||!valid){this.tip.hidden=true;return;}const y=this.kind==='linear'?state.m*x+state.b:ratio(x,length);this.tip.textContent=this.kind==='linear'?`Q = ${number(x)} · P = ${number(y)}`:`x = ${number(x)} · r = ${number(y)}`;this.tip.hidden=false;this.tip.style.left=Math.max(0,Math.min(this.w-this.tip.offsetWidth,px+12))+'px';this.tip.style.top=Math.max(0,py-this.tip.offsetHeight-12)+'px';}
+ path(points){let d='';for(const p of points){if(!Number.isFinite(p[0])||!Number.isFinite(p[1])){d+=' ';continue;}const px=this.sx(p[0]),py=Math.max(-1e6,Math.min(1e6,this.sy(p[1])));d+=(d.trim()?'L':'M')+px.toFixed(3)+','+py.toFixed(3);}return d;}
+ draw(){
+  this.geometry();const svg=this.svg,b=this.box,v=this.view;svg.replaceChildren();
+  svg.append(element('title',{},this.kind==='linear'?'Recta L: P=mQ+b':'Hipérbola H_Q: r=x/(ℓ−x)'));
+  const defs=element('defs'),clip=element('clipPath',{id:this.kind+'-clip'});clip.append(element('rect',{x:b.l,y:b.t,width:b.r-b.l,height:b.b-b.t}));defs.append(clip);svg.append(defs);
+  const xlabel=this.kind==='linear'?'Q':'x = PR',ylabel=this.kind==='linear'?'P':'r = PR/RQ';
+  for(const x of ticks(v.xmin,v.xmax,this.w<400?3:5)){const px=this.sx(x);svg.append(element('line',{x1:px,x2:px,y1:b.t,y2:b.b,class:'grid'}),element('text',{x:px,y:b.b+21,'text-anchor':px>b.r-20?'end':px<b.l+10?'start':'middle',class:'tick'},number(x)));}
+  for(const y of ticks(v.ymin,v.ymax,5)){const py=this.sy(y);svg.append(element('line',{x1:b.l,x2:b.r,y1:py,y2:py,class:'grid'}),element('text',{x:b.l-8,y:py+4,'text-anchor':'end',class:'tick'},number(y)));}
+  svg.append(element('rect',{x:b.l,y:b.t,width:b.r-b.l,height:b.b-b.t,class:'frame'}));
+  const marks=element('g',{'clip-path':`url(#${this.kind}-clip)`});svg.append(marks);
+  const {p,length}=model(state);let label;
+  if(this.kind==='linear'){
+   const lo=Math.max(0,v.xmin),hi=Math.min(state.qmax,v.xmax);
+   if(hi>=lo)marks.append(element('path',{d:this.path([[lo,state.m*lo+state.b],[hi,state.m*hi+state.b]]),class:'line',stroke:'var(--blue)','data-curve':'L'}));
+   marks.append(element('path',{d:this.path([[state.q,0],[state.q,p],[0,p]]),class:'reference',fill:'none'}));
+   marks.append(element('circle',{cx:this.sx(state.q),cy:this.sy(p),r:5,fill:'var(--blue)','data-current-point':'true'}));
+   if(this.inside(this.sx(state.q),this.sy(p)))label=element('text',{x:Math.max(b.l+75,Math.min(b.r-6,this.sx(state.q)-8)),y:Math.max(b.t+14,Math.min(b.b-10,this.sy(p)-12)),'text-anchor':'end',class:'value-label'},`(Q, P) = (${number(state.q)}, ${number(p)})`);
+  }else if(length>0){
+   const lo=Math.max(0,v.xmin),hi=Math.min(length,v.xmax);const points=[];
+   if(hi>lo){for(let i=0;i<=1200;i++){const x=lo+(hi-lo)*i/1200;if(x<length)points.push([x,ratio(x,length)]);}}
+   marks.append(element('path',{d:this.path(points),class:'line',stroke:'var(--orange)','data-curve':'H'}));
+   const a=this.sx(length);marks.append(element('line',{x1:a,x2:a,y1:b.t,y2:b.b,class:'reference'}));
+   if(a>=b.l&&a<=b.r)label=element('text',{x:Math.max(b.l+60,a-7),y:b.t+16,'text-anchor':'end',class:'value-label'},`x = ℓ = ${number(length)}`);
+  }else{svg.append(element('text',{x:(b.l+b.r)/2,y:(b.t+b.b)/2,'text-anchor':'middle'},length===0?'Segmento degenerado: ℓ = 0':'Sin intervalo interior con P < Q'));}
+  if(label)svg.append(label);
+  svg.append(element('text',{x:(b.l+b.r)/2,y:this.h-8,'text-anchor':'middle',class:'axis-title'},xlabel),element('text',{transform:`translate(16 ${(b.t+b.b)/2}) rotate(-90)`,'text-anchor':'middle',class:'axis-title'},ylabel));
+  const kept=[];for(const el of svg.querySelectorAll('.tick,.value-label')){const box=el.getBoundingClientRect();if(kept.some(a=>box.left<a.right+4&&box.right>a.left-4&&box.top<a.bottom+4&&box.bottom>a.top-4))el.setAttribute('visibility','hidden');else kept.push(box);}
+ }
+}
+const plots={linear:new Plot('linear-plot','linear'),hyperbola:new Plot('hyperbola-plot','hyperbola')};
+function update(reset=false){
+ const {p,length}=model(state);
+ $('line-equation').textContent=`L: P = ${number(state.m)} Q`+(state.b===0?'':` ${state.b<0?'−':'+'} ${number(Math.abs(state.b))}`);
+ $('linear-kind').textContent=state.b===0?'Relación lineal':'Relación afín';
+ $('q-value').textContent=number(state.q);$('values').textContent=`P = ${number(p)} · Q = ${number(state.q)} · ℓ = Q − P = ${number(length)}`;
+ $('denominator').textContent=`${number(length)} − x`;
+ $('domain').textContent=length>0?`Dominio: 0 < x < ${number(length)}. Asíntota vertical: x = ${number(length)}.`:'Sin hipérbola de división interior para estos extremos.';
+ $('message').textContent=length===0?'P y Q coinciden. Aumenta Q o modifica la recta.':length<0?'Se requiere P < Q. Modifica Q, m o b.':'';
+ for(const plot of Object.values(plots)){plot.tip.hidden=true;reset?plot.reset():plot.draw();}
+}
+$('q').addEventListener('input',e=>{state.q=Number(e.target.value);update();});
+$('parameters').addEventListener('submit',e=>e.preventDefault());
+for(const id of ['slope','intercept','qmax'])$(id).addEventListener('input',()=>{if(!$('parameters').checkValidity())return;state.m=Number($('slope').value);state.b=Number($('intercept').value);state.qmax=Number($('qmax').value);state.q=Math.min(state.q,state.qmax);$('q').max=String(state.qmax);$('q').value=String(state.q);update(true);});
+$('base').addEventListener('click',()=>{Object.assign(state,{m:.25,b:0,qmax:4,q:4});$('slope').value='.25';$('intercept').value='0';$('qmax').value='4';$('q').max='4';$('q').value='4';update(true);});
+for(const bar of document.querySelectorAll('[data-controls]'))bar.addEventListener('click',e=>{const action=e.target.dataset.action;if(!action)return;const plot=plots[bar.dataset.controls];action==='reset'?plot.reset():plot.zoom(action==='in'?2:.5);});
+window.geometry={model,ratio,state,plots};
+update();
+})();
+</script>
+</body>
+</html>

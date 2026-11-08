@@ -3,6 +3,16 @@
 Aqui se presentarán simulaciones de los campos de la física, la biologia y las matematicas. Cada simulación cuenta con su código, requisitos y definicion de parametros, ademas de una breve explicación de lo que se simula.
 
 ---
+## Geometría analítica: recta e hipérbola
+
+[![Recta L e hipérbola H_Q, con la región barrida por la familia](./Geometria-analitica/portada.svg)](./Geometria-analitica/)
+
+Un explorador interactivo de la relación entre los extremos de un segmento y su razón de división interior. Incluye parámetros editables, ecuaciones actualizadas y zoom independiente en ambos gráficos.
+
+**[Abrir el proyecto y las instrucciones](./Geometria-analitica/)** · [Descargar el explorador HTML](https://github.com/rodrigo-svg/Interesting-Simultaion/raw/refs/heads/main/Geometria-analitica/index.html)
+
+---
+
 ## Previas
 | Simulación | Enlace Visual |
 | :--- | :--- |
@@ -39,3 +49,4 @@ Simulación de sistemas de Reacción-Difusión basada en el modelo de Gray-Scott
 
 **Requisitos:**
 - Python 3.x, `numpy`, `pygame`, `imageio` 
+
