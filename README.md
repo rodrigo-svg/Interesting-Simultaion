@@ -3,6 +3,15 @@
 Aqui se presentarán simulaciones de los campos de la física, la biologia y las matematicas. Cada simulación cuenta con su código, requisitos y definicion de parametros, ademas de una breve explicación de lo que se simula.
 
 ---
+## La música de tu voz
+
+[![Círculo con la frecuencia de una voz, 132 Hz, y sus resonancias](./Musica-de-tu-voz/portada.png)](./Musica-de-tu-voz/)
+
+Escucha una voz por el micrófono o desde un audio, mide su frecuencia fundamental y sus resonancias, y genera música tranquila afinada a ellas.
+
+**[Abrir el proyecto y las instrucciones](./Musica-de-tu-voz/)** · [Descargar la aplicación HTML](https://github.com/rodrigo-svg/Interesting-Simultaion/raw/refs/heads/main/Musica-de-tu-voz/index.html)
+
+---
 ## Canal de agua: ¿qué forma la hace llegar antes?
 
 [![Velocidad del agua en cuatro canales y vista 3D](./Canal-de-agua/portada.png)](./Canal-de-agua/)
