@@ -5,29 +5,35 @@ Aqui se presentarán simulaciones de los campos de la física, la biologia y las
 ---
 ## La música de tu voz
 
-[![Círculo con la frecuencia de una voz, 132 Hz, y sus resonancias](./Musica-de-tu-voz/portada.png)](./Musica-de-tu-voz/)
+[![Círculo con la frecuencia de una voz, 132 Hz, y sus resonancias](./Musica-de-tu-voz/musica-de-tu-voz.png)](./Musica-de-tu-voz/)
 
 Escucha una voz por el micrófono o desde un audio, mide su frecuencia fundamental y sus resonancias, y genera música tranquila afinada a ellas.
 
-**[Abrir el proyecto y las instrucciones](./Musica-de-tu-voz/)** · [Descargar la aplicación HTML](https://github.com/rodrigo-svg/Interesting-Simultaion/raw/refs/heads/main/Musica-de-tu-voz/index.html)
+**[Abrir el proyecto y las instrucciones](./Musica-de-tu-voz/)**
+
+[![Descargar](./boton-descargar.svg)](https://github.com/rodrigo-svg/Interesting-Simultaion/raw/refs/heads/main/Musica-de-tu-voz/musica-de-tu-voz.zip)
 
 ---
 ## Canal de agua: ¿qué forma la hace llegar antes?
 
-[![Velocidad del agua en cuatro canales y vista 3D](./Canal-de-agua/portada.png)](./Canal-de-agua/)
+[![Velocidad del agua en cuatro canales y vista 3D](./Canal-de-agua/canal-de-agua.png)](./Canal-de-agua/)
 
 Agua real (con viscosidad y roce) bajando de P a Q por cuatro canales con el mismo fondo y el mismo caudal: paredes paralelas, que se angostan en línea recta, que se angostan como cicloide, y cicloide con fondo cicloidal. Muestra la velocidad del agua mientras baja y el canal en 3D, que se puede girar. En el caso 4, las dos cicloides tienen parámetros ajustables.
 
-**[Abrir el proyecto y las instrucciones](./Canal-de-agua/)** · [Descargar la simulación HTML](https://github.com/rodrigo-svg/Interesting-Simultaion/raw/refs/heads/main/Canal-de-agua/index.html)
+**[Abrir el proyecto y las instrucciones](./Canal-de-agua/)**
+
+[![Descargar](./boton-descargar.svg)](https://github.com/rodrigo-svg/Interesting-Simultaion/raw/refs/heads/main/Canal-de-agua/canal-de-agua.zip)
 
 ---
 ## Geometría analítica: recta e hipérbola
 
-[![Recta L e hipérbola H_Q, con la región barrida por la familia](./Geometria-analitica/portada.svg)](./Geometria-analitica/)
+[![Recta L e hipérbola H_Q, con la región barrida por la familia](./Geometria-analitica/recta-e-hiperbola.svg)](./Geometria-analitica/)
 
 Un explorador interactivo de la relación entre los extremos de un segmento y su razón de división interior. Incluye parámetros editables, ecuaciones actualizadas y zoom independiente en ambos gráficos.
 
-**[Abrir el proyecto y las instrucciones](./Geometria-analitica/)** · [Descargar el explorador HTML](https://github.com/rodrigo-svg/Interesting-Simultaion/raw/refs/heads/main/Geometria-analitica/index.html)
+**[Abrir el proyecto y las instrucciones](./Geometria-analitica/)**
+
+[![Descargar](./boton-descargar.svg)](https://github.com/rodrigo-svg/Interesting-Simultaion/raw/refs/heads/main/Geometria-analitica/recta-e-hiperbola.zip)
 
 ---
 

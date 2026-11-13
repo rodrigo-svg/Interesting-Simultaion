@@ -2,11 +2,13 @@
 
 Simulación de agua real (con viscosidad y roce) bajando por un canal desde un punto P hasta un punto Q, 1 m más abajo y 2 m más adelante. Compara cuatro canales con el mismo fondo y el mismo caudal, que solo se diferencian en la forma de sus paredes y de su corte. Muestra la velocidad del agua mientras baja y el canal en 3D, que se puede girar libremente.
 
-![Velocidad del agua en los cuatro canales y vista 3D](./portada.png)
+![Velocidad del agua en los cuatro canales y vista 3D](./canal-de-agua.png)
 
 ## Uso
 
-1. [Descarga index.html](https://github.com/rodrigo-svg/Interesting-Simultaion/raw/refs/heads/main/Canal-de-agua/index.html) y ábrelo en tu navegador. GitHub muestra el código; el archivo descargado contiene la simulación completa.
+1. Descarga `canal-de-agua.zip`, descomprímelo y abre `canal-de-agua.html` en tu navegador.
+
+   [![Descargar](../boton-descargar.svg)](https://github.com/rodrigo-svg/Interesting-Simultaion/raw/refs/heads/main/Canal-de-agua/canal-de-agua.zip)
 2. Ajusta el caudal total, el ancho del canal en P y en Q, y la cámara lenta.
 3. En el **caso 4** puedes cambiar las dos cicloides:
    - **Corte de frente:** qué fracción de un arco de cicloide forma el fondo. Con el arco completo (1,00) el fondo es hondo y empalma vertical con las paredes; con fracciones menores es más plano. Siempre es una cicloide verdadera; lo que cambia es el radio del círculo que la genera.
@@ -70,13 +72,14 @@ $$Q = V\,A,\qquad R = \frac{A}{P},\qquad V\frac{dV}{ds} = g\sin\theta - \frac{f\
 
 ## Archivos
 
-- `index.html`: simulación completa en un solo archivo, con three.js integrado.
-- `portada.png`: captura de la simulación.
+- `canal-de-agua.html`: simulación completa en un solo archivo, con three.js integrado.
+- `canal-de-agua.zip`: el mismo HTML comprimido; es lo que baja el botón Descargar.
+- `canal-de-agua.png`: captura de la simulación.
 - `animacion.gif`: animación de las cuatro pistas.
 - `fuente/index.src.html`: la página antes de integrar los datos y three.js.
 - `fuente/canal.js`: física del canal (cortes, roce, integración, resaltos oblicuos).
 - `fuente/curva_optima.js`: calcula la curva óptima del fondo. Se ejecuta con `node curva_optima.js > base.json`.
 - `fuente/base.json`: puntos de la curva óptima.
-- `fuente/construir.py`: arma `index.html` a partir de las fuentes. Requiere `npm install three@0.128.0`.
+- `fuente/construir.py`: arma `canal-de-agua.html` y `canal-de-agua.zip` a partir de las fuentes. Requiere `npm install three@0.128.0`.
 
 Usa [three.js](https://threejs.org) r128 (licencia MIT) para la vista 3D.

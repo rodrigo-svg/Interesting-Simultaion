@@ -2,11 +2,13 @@
 
 Explorador de geometría analítica: una relación lineal entre las coordenadas de los extremos de un segmento determina una familia de hipérbolas.
 
-![Recta e hipérbola](./portada.svg)
+![Recta e hipérbola](./recta-e-hiperbola.svg)
 
 ## Uso
 
-1. [Descarga index.html](https://github.com/rodrigo-svg/Interesting-Simultaion/raw/refs/heads/main/Geometria-analitica/index.html) y ábrelo en tu navegador. GitHub muestra el código; el archivo descargado contiene la aplicación completa.
+1. Descarga `recta-e-hiperbola.zip`, descomprímelo y abre `recta-e-hiperbola.html` en tu navegador.
+
+   [![Descargar](../boton-descargar.svg)](https://github.com/rodrigo-svg/Interesting-Simultaion/raw/refs/heads/main/Geometria-analitica/recta-e-hiperbola.zip)
 2. Mueve Q con el deslizador. Edita la pendiente m, el término independiente b y el límite superior de Q.
 3. Usa la rueda, los botones o el gesto de pinza para ampliar cada gráfico; arrastra para desplazarte. Las vistas son independientes y las escalas siempre son lineales.
 
@@ -38,7 +40,8 @@ El sombreado representa esa unión, que no tiene cota superior. La curva naranja
 
 ## Archivos
 
-- `index.html`: aplicación completa, con estilos y JavaScript integrados.
-- `portada.svg`: figura vectorial con los nombres, ecuaciones y región barrida del caso base.
+- `recta-e-hiperbola.html`: aplicación completa, con estilos y JavaScript integrados.
+- `recta-e-hiperbola.zip`: el mismo HTML comprimido; es lo que baja el botón Descargar.
+- `recta-e-hiperbola.svg`: figura vectorial con los nombres, ecuaciones y región barrida del caso base.
 
 Los otros experimentos del repositorio permanecen disponibles en su página principal.

@@ -2,11 +2,13 @@
 
 Escucha una voz, mide su frecuencia y genera música tranquila afinada a ella.
 
-![La música de tu voz](./portada.png)
+![La música de tu voz](./musica-de-tu-voz.png)
 
 ## Uso
 
-1. [Descarga index.html](https://github.com/rodrigo-svg/Interesting-Simultaion/raw/refs/heads/main/Musica-de-tu-voz/index.html) y ábrelo en tu navegador.
+1. Descarga `musica-de-tu-voz.zip`, descomprímelo y abre `musica-de-tu-voz.html` en tu navegador.
+
+   [![Descargar](../boton-descargar.svg)](https://github.com/rodrigo-svg/Interesting-Simultaion/raw/refs/heads/main/Musica-de-tu-voz/musica-de-tu-voz.zip)
 2. Toca el círculo y sostén una «aaa» unos segundos, o sube un audio con la voz.
 3. Toca el círculo para pausar o seguir.
 
@@ -25,5 +27,6 @@ No requiere instalación, conexión a internet ni bibliotecas externas. El audio
 
 ## Archivos
 
-- `index.html`: aplicación completa, con estilos y JavaScript integrados.
-- `portada.png`: captura de la aplicación.
+- `musica-de-tu-voz.html`: aplicación completa, con estilos y JavaScript integrados.
+- `musica-de-tu-voz.zip`: el mismo HTML comprimido; es lo que baja el botón Descargar.
+- `musica-de-tu-voz.png`: captura de la aplicación.
